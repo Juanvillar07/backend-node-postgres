@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 
 const UserService = require('../services/user.service');
 const validatorHandler = require('../middlewares/validator.handler');
@@ -7,18 +8,24 @@ const {
   getUserSchema,
   updateUserSchema,
 } = require('./../schemas/user.schema');
+const { checkRoles } = require('./../middlewares/auth.handler');
 
 const router = express.Router();
 const service = new UserService();
 
-router.get('/', async (req, res, next) => {
-  try {
-    const users = await service.find();
-    res.json(users);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get(
+  '/',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles(1),
+  async (req, res, next) => {
+    try {
+      const users = await service.find();
+      res.json(users);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.post('/', validatorHandler(createUserSchema), async (req, res, next) => {
   try {
