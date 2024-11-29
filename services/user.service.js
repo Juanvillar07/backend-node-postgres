@@ -34,6 +34,12 @@ class UserService {
     }
     return user;
   }
+
+  async update(id, changes) {
+    const user = await this.findOne(id);
+    const rta = await user.update(changes);
+    return rta;
+  }
 }
 
 module.exports = UserService;

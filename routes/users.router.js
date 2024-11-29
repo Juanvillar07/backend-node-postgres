@@ -51,4 +51,21 @@ router.get(
   },
 );
 
+router.patch('/:id',
+  passport.authenticate('jwt', { session: false }),
+  checkRoles(1),
+  validatorHandler(getUserSchema, 'params'),
+  validatorHandler(updateUserSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const body = req.body;
+      const category = await service.update(id, body);
+      res.json(category);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 module.exports = router;

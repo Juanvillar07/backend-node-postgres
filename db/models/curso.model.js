@@ -20,15 +20,6 @@ const CursoSchema = {
     type: DataTypes.INTEGER,
     field: 'valor_curso',
   },
-  correo: {
-    allowNull: false,
-    type: DataTypes.STRING,
-    unique: true,
-  },
-  clave: {
-    allowNull: false,
-    type: DataTypes.STRING,
-  },
   categoriaId: {
     allowNull: false,
     type: DataTypes.INTEGER,
