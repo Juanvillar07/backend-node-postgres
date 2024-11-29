@@ -1,4 +1,5 @@
 const boom = require('@hapi/boom');
+const jwt = require('jsonwebtoken');
 
 const { config } = require('./../config/config');
 
@@ -32,6 +33,27 @@ function checkRoles(...roles) {
   }
 }
 
+const verifyToken = (req, res, next) => {
+
+  const token = req.headers.authorization?.split(' ')[1];
+  console.log(token);
+  if (!token) {
+    return next(boom.unauthorized('Token no proporcionado'));
+  }
+
+  try {
+    const decoded = jwt.verify(token, config.jwtSecret);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    console.log(error);
+    if (error.name === 'TokenExpiredError') {
+      return next(boom.unauthorized('El token ha expirado. Por favor, inicia sesión nuevamente.'));
+    }
+    return next(boom.unauthorized('Token inválido'));
+  }
+};
 
 
-module.exports = { checkApiKey, checkAdminRole, checkRoles }
+
+module.exports = { checkApiKey, checkAdminRole, checkRoles, verifyToken }

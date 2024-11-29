@@ -7,6 +7,7 @@ const UserService = require('./user.service');
 const service = new UserService();
 
 class AuthService {
+
   async getUser(email, password) {
     const user = await service.findByEmail(email);
     if (!user) {
@@ -25,7 +26,12 @@ class AuthService {
       sub: user.id,
       role: user.rolId,
     };
-    const token = jwt.sign(payload, config.jwtSecret);
+
+    const options = {
+      expiresIn: '5m' // Expiración en 1 hora
+    };
+
+    const token = jwt.sign(payload, config.jwtSecret, options);
     return {
       user,
       token,
